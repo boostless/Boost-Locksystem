@@ -125,7 +125,7 @@ RegisterNUICallback('Lock', function(data)
         if vehLockStatus == 1 then
             Progress(_('pr_lock'), 1500)
             SetVehicleDoorsLocked(veh, 4)
-            Notification('success', ('lock_veh'))
+            Notification('success', _('lock_veh'))
         else
             Notification('error', _('locked'))
         end
@@ -141,7 +141,7 @@ RegisterNUICallback('Lock', function(data)
                 ClearPedTasksImmediately(playerPed)
                 DeleteEntity(SpatelObject)
                 SetVehicleDoorsLocked(veh, 4)
-                Notification('success', ('lock_veh'))
+                Notification('success', _('lock_veh'))
             else
                 Notification('error',_('too_far_veh'))
             end
