@@ -4,15 +4,12 @@ local startedEngine = {}
 ESX.RegisterServerCallback('Boost-Locksystem:HasKeys', function(source, cb, _plate)
     local xPlayer = ESX.GetPlayerFromId(source)
     local found = false
-    for i=1, 50 do
-        local slot = exports['linden_inventory']:getPlayerSlot(xPlayer, i)
-        if tablelength(slot) ~= 0 then
-            if slot.name == 'car_keys' then
-                if slot.metadata.plate == _plate then
-                    found = true
-                    cb(true)
-                end
-            end
+    local inventory = xPlayer.getInventory()
+    for i=1, tablelength(inventory) do
+        if inventory[i].name == 'car_keys' then
+            searchedVeh[inventory[i].metadata.plate] = true
+            found = true
+            cb(true)
         end
     end
     if not found then
@@ -32,8 +29,7 @@ ESX.RegisterServerCallback('Boost-Locksystem:IsCarRegistered', function(source, 
     end)
 end)
 
-RegisterNetEvent('Boost-Locksystem:AddKeys')
-AddEventHandler('Boost-Locksystem:AddKeys', function(_plate)
+RegisterNetEvent('Boost-Locksystem:AddKeys', function(_plate)
     local xPlayer = ESX.GetPlayerFromId(source)
     if xPlayer.getInventoryItem('car_keys', {plate = _plate}).count > 0 then
         return
@@ -43,9 +39,7 @@ AddEventHandler('Boost-Locksystem:AddKeys', function(_plate)
     xPlayer.addInventoryItem('car_keys', 1, {plate = _plate, description = _U('key_description',_plate)})
 end)
 
-
-RegisterNetEvent('Boost-Locksystem:CreateKeyCopy')
-AddEventHandler('Boost-Locksystem:CreateKeyCopy', function(_plate)
+RegisterNetEvent('Boost-Locksystem:CreateKeyCopy', function(_plate)
     local xPlayer = ESX.GetPlayerFromId(source)
     if xPlayer.getJob().name ~= 'mechanic' then
         DropPlayer(xPlayer.source, ':)')
@@ -54,19 +48,16 @@ AddEventHandler('Boost-Locksystem:CreateKeyCopy', function(_plate)
     xPlayer.addInventoryItem('car_keys', 1, {plate = _plate, description = _U('key_description',_plate)})
 end)
 
-
 RegisterNetEvent('Boost-Locksystem:Refresh', function()
     local xPlayers = ESX.GetPlayers()
     local found = 0
     for i=1, #xPlayers, 1 do
         local xPlayer = ESX.GetPlayerFromId(xPlayers[i])
-        for i=1, 50 do
-            local slot = exports['linden_inventory']:getPlayerSlot(xPlayer, i)
-            if tablelength(slot) ~= 0 then
-                if slot.name == 'car_keys' then
-                    searchedVeh[slot.metadata.plate] = true
-                    found = found + 1
-                end
+        local inventory = xPlayer.getInventory()
+        for i=1, tablelength(inventory) do
+            if inventory[i].name == 'car_keys' then
+                searchedVeh[inventory[i].metadata.plate] = true
+                found = found + 1
             end
         end
     end
