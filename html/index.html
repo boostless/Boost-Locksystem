@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/tailwind.css">
+  <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+  <script src="nui://game/ui/jquery.js" type="text/javascript"></script>
+  <script src="app.js" type="text/javascript"></script>
+  <title>Boost-Locksystem</title>
+  <style>
+    ::-webkit-scrollbar {
+display: none;
+}
+
+</style>
+</head>
+<body x-data="main()" x-init="listen()" @keyup.enter='close()' class='flex-1 h-screen w-full font-lato' x-show.transition.200ms="show === true">
+  <div class = 'main flex flex-1 h-screen items-end justify-center'>
+    <div class = 'bg-gray-900 rounded-3xl w-32 h-56 p-5 text-white font-bold my-1'>
+      <div class='rounded-full p-3 bg-white w-2 h-2'></div>
+      <div class='text-center my-2'><span x-text='plate'></span></div>
+      <div class = 'my-1 grid grid-cols-1 gap-1'>
+        <button @click='lock()' class='bg-gray-600 text-center py-2 rounded-t-xl hover:bg-gray-700 transition-all ease-in-out'><i class="fas fa-lock"></i></button>
+        <button @click='engine()' class='bg-gray-600 text-center py-2 hover:bg-gray-700 transition-all ease-in-out'><i class="fas fa-power-off"></i></button>
+        <button @click='unlock()' class='bg-gray-600 text-center py-2 rounded-b-xl hover:bg-gray-700 transition-all ease-in-out'><i class="fas fa-lock-open"></i></button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+
