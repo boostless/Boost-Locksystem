@@ -32,7 +32,8 @@ ESX.RegisterServerCallback('Boost-Locksystem:IsCarRegistered', function(source, 
     end)
 end)
 
-RegisterNetEvent('Boost-Locksystem:AddKeys', function(_plate)
+RegisterNetEvent('Boost-Locksystem:AddKeys')
+AddEventHandler('Boost-Locksystem:AddKeys', function(_plate)
     local xPlayer = ESX.GetPlayerFromId(source)
     if xPlayer.getInventoryItem('car_keys', {plate = _plate}).count > 0 then
         return
@@ -42,7 +43,9 @@ RegisterNetEvent('Boost-Locksystem:AddKeys', function(_plate)
     xPlayer.addInventoryItem('car_keys', 1, {plate = _plate, description = _U('key_description',_plate)})
 end)
 
-RegisterNetEvent('Boost-Locksystem:CreateKeyCopy', function(_plate)
+
+RegisterNetEvent('Boost-Locksystem:CreateKeyCopy')
+AddEventHandler('Boost-Locksystem:CreateKeyCopy', function(_plate)
     local xPlayer = ESX.GetPlayerFromId(source)
     if xPlayer.getJob().name ~= 'mechanic' then
         DropPlayer(xPlayer.source, ':)')
@@ -50,6 +53,7 @@ RegisterNetEvent('Boost-Locksystem:CreateKeyCopy', function(_plate)
     end
     xPlayer.addInventoryItem('car_keys', 1, {plate = _plate, description = _U('key_description',_plate)})
 end)
+
 
 RegisterNetEvent('Boost-Locksystem:Refresh', function()
     local xPlayers = ESX.GetPlayers()
