@@ -125,7 +125,7 @@ RegisterNUICallback('Lock', function(data)
         if vehLockStatus == 1 then
             Progress(_('pr_lock'), 1500)
             SetVehicleDoorsLocked(veh, 4)
-            Notification('success', _U('lock_veh', plate))
+            Notification('success', ('lock_veh'))
         else
             Notification('error', _('locked'))
         end
@@ -141,7 +141,7 @@ RegisterNUICallback('Lock', function(data)
                 ClearPedTasksImmediately(playerPed)
                 DeleteEntity(SpatelObject)
                 SetVehicleDoorsLocked(veh, 4)
-                Notification('success', _U('lock_veh', plate))
+                Notification('success', ('lock_veh'))
             else
                 Notification('error',_('too_far_veh'))
             end
@@ -170,7 +170,7 @@ RegisterNUICallback('Unlock', function(data)
         if vehLockStatus == 4 then
             Progress(_('pr_unlock'), 1500)
             SetVehicleDoorsLocked(veh, 1)
-            Notification('success', _U('unlock_veh', plate))
+            Notification('success', _('unlock_veh'))
         else
             Notification('error', _('unlocked'))
         end
@@ -186,7 +186,7 @@ RegisterNUICallback('Unlock', function(data)
                 ClearPedTasksImmediately(playerPed)
                 DeleteEntity(SpatelObject)
                 SetVehicleDoorsLocked(veh, 1)
-                Notification('success', _U('unlock_veh', plate))
+                Notification('success', _('unlock_veh'))
             else
                 Notification('error',_('too_far_veh'))
             end
