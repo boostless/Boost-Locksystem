@@ -17,27 +17,24 @@ Citizen.CreateThread(function()
     while true do
         local playerPed = PlayerPedId()
         local veh = GetVehiclePedIsIn(playerPed, true)
-        local plate = GetVehicleNumberPlateText(GetVehiclePedIsIn(playerPed, true))
+        local plate = GetVehicleNumberPlateText(veh)
         local isInVehicle = IsPedInAnyVehicle(playerPed, false)
 
-        if isInVehicle and GetPedInVehicleSeat(GetVehiclePedIsIn(playerPed, true), -1) == playerPed then
-            sleep = 0
-            if LastVehicle ~= GetVehiclePedIsIn(playerPed, false) then
-                if startedEngine[plate] == true then
-                    SetVehicleEngineOn(veh, true, true, false)
-                else
-                    SetVehicleEngineOn(veh, false, false, true)
-                end
+        if isInVehicle and GetPedInVehicleSeat(veh, -1) == playerPed then
+            sleep = 10
+            if startedEngine[plate] == true then
+                SetVehicleEngineOn(veh, true, true, false)
+            else
+                SetVehicleEngineOn(veh, false, false, true)
             end
         else
             sleep = 100
         end
-        if isInVehicle and GetPedInVehicleSeat(GetVehiclePedIsIn(playerPed, false), -1) == playerPed then
-            sleep = 0
-                if not startedEngine[plate] then
-                    local veh = GetVehiclePedIsIn(playerPed, false)
-                    SetVehicleEngineOn(veh, false, false, true)
-                end
+        if isInVehicle and GetPedInVehicleSeat(veh, -1) == playerPed then
+            sleep = 10
+            if not startedEngine[plate] then
+                SetVehicleEngineOn(veh, false, false, true)
+            end
         else
             sleep = 100
         end
@@ -64,9 +61,10 @@ Citizen.CreateThread(function()
 end)
 
 function Search()
-    local vehicle = GetVehiclePedIsIn(PlayerPedId(), true)
+    local playerPed = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(playerPed, true)
     local plate = GetVehicleNumberPlateText(vehicle)
-    local isInVehicle = IsPedInAnyVehicle(PlayerPedId(), false)
+    local isInVehicle = IsPedInAnyVehicle(playerPed, false)
     ESX.TriggerServerCallback('Boost-Locksystem:HasKeys', function(hasKeys) 
         if hasKeys then
             Notification('info', _('has_key'))

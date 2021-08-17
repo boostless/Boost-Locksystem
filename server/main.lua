@@ -7,9 +7,10 @@ ESX.RegisterServerCallback('Boost-Locksystem:HasKeys', function(source, cb, _pla
     local inventory = xPlayer.getInventory()
     for i=1, tablelength(inventory) do
         if inventory[i].name == 'car_keys' then
-            searchedVeh[inventory[i].metadata.plate] = true
-            found = true
-            cb(true)
+            if inventory[i].metadata.plate == _plate then
+                found = true
+                cb(true)
+            end
         end
     end
     if not found then
@@ -35,7 +36,7 @@ RegisterNetEvent('Boost-Locksystem:AddKeys', function(_plate)
         return
     end
     searchedVeh[_plate] = true
-    TriggerEvent('Boost-Locksystem:Refresh')
+    TriggerClientEvent('Boost-Locksystem:SetUpSearched', -1, searchedVeh)
     xPlayer.addInventoryItem('car_keys', 1, {plate = _plate, description = _U('key_description',_plate)})
 end)
 
