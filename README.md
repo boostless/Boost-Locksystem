@@ -14,3 +14,7 @@ TriggerServerEvent('Boost-Locksystem:CreateKeyCopy', plate)
 ```LUA
 TriggerServerEvent('Boost-Locksystem:AddKeys', plate)
 ```
+* If you want to remove the key use this trigger
+```LUA
+TriggerServerEvent('Boost-Locksystem:RemoveKey', plate)
+```
