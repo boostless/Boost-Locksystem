@@ -12,52 +12,39 @@ Citizen.CreateThread(function()
 end)
 
 
-Citizen.CreateThread(function()
-    local sleep = 0
-    while true do
-        local playerPed = PlayerPedId()
-        local veh = GetVehiclePedIsIn(playerPed, true)
-        local plate = GetVehicleNumberPlateText(veh)
-        local isInVehicle = IsPedInAnyVehicle(playerPed, false)
+SetInterval('main', 10, function()
+    local playerPed = PlayerPedId()
+    local veh = GetVehiclePedIsIn(playerPed, true)
+    local plate = GetVehicleNumberPlateText(veh)
+    local isInVehicle = IsPedInAnyVehicle(playerPed, false)
 
-        if isInVehicle and GetPedInVehicleSeat(veh, -1) == playerPed then
-            sleep = 10
-            if startedEngine[plate] == true then
-                SetVehicleEngineOn(veh, true, true, false)
-            else
-                SetVehicleEngineOn(veh, false, false, true)
-            end
+    if not isInVehicle then SetInterval('main', 500) end
+
+    if isInVehicle and GetPedInVehicleSeat(veh, -1) == playerPed then
+        if startedEngine[plate] == true then
+            SetVehicleEngineOn(veh, true, true, false)
         else
-            sleep = 100
+            SetVehicleEngineOn(veh, false, false, true)
         end
-        if isInVehicle and GetPedInVehicleSeat(veh, -1) == playerPed then
-            sleep = 10
-            if not startedEngine[plate] then
-                SetVehicleEngineOn(veh, false, false, true)
-            end
-        else
-            sleep = 100
-        end
-        Citizen.Wait(sleep)
     end
+
+    if isInVehicle and GetPedInVehicleSeat(veh, -1) == playerPed then
+        if not startedEngine[plate] then
+            SetVehicleEngineOn(veh, false, false, true)
+        end
+    end
+
 end)
 
-Citizen.CreateThread(function()
-    local sleep = 10
-	while true do
-		local ped = GetPlayerPed(-1)
-        if DoesEntityExist(GetVehiclePedIsTryingToEnter(PlayerPedId(ped))) then
-            sleep = 10
-        	local veh = GetVehiclePedIsTryingToEnter(PlayerPedId(ped))
-	        local lock = GetVehicleDoorLockStatus(veh)
-	        if lock == 4 then
-	        	ClearPedTasks(ped)
-	        end
-        else
-            sleep = 150
-        end
-        Citizen.Wait(sleep)
-	end
+SetInterval('lock',10, function()
+    local ped = GetPlayerPed(-1)
+    if DoesEntityExist(GetVehiclePedIsTryingToEnter(PlayerPedId(ped))) then
+        local veh = GetVehiclePedIsTryingToEnter(PlayerPedId(ped))
+	    local lock = GetVehicleDoorLockStatus(veh)
+	    if lock == 4 then
+	        ClearPedTasks(ped)
+	    end
+    else SetInterval('lock', 100) end
 end)
 
 function Search()
