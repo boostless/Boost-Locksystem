@@ -3,17 +3,9 @@ local startedEngine = {}
 
 ESX.RegisterServerCallback('Boost-Locksystem:HasKeys', function(source, cb, _plate)
     local xPlayer = ESX.GetPlayerFromId(source)
-    local found = false
-    local inventory = xPlayer.getInventory()
-    for i=1, tablelength(inventory) do
-        if inventory[i].name == 'car_keys' then
-            if inventory[i].metadata.plate == _plate then
-                found = true
-                cb(true)
-            end
-        end
-    end
-    if not found then
+    if xPlayer.getInventoryItem('car_keys', {plate = _plate, description = _U('key_description', _plate)}).count > 0 then
+        cb(true)
+    else
         cb(false)
     end
 end)
@@ -30,9 +22,10 @@ ESX.RegisterServerCallback('Boost-Locksystem:IsCarRegistered', function(source, 
     end)
 end)
 
-RegisterNetEvent('Boost-Locksystem:AddKeys', function(_plate)
+RegisterNetEvent('Boost-Locksystem:AddKeys')
+AddEventHandler('Boost-Locksystem:AddKeys', function(_plate)
     local xPlayer = ESX.GetPlayerFromId(source)
-    if xPlayer.getInventoryItem('car_keys', {plate = _plate}).count > 0 then
+    if xPlayer.getInventoryItem('car_keys', {plate = _plate, description = _U('key_description', _plate)}).count > 0 then
         return
     end
     searchedVeh[_plate] = true
@@ -40,13 +33,22 @@ RegisterNetEvent('Boost-Locksystem:AddKeys', function(_plate)
     xPlayer.addInventoryItem('car_keys', 1, {plate = _plate, description = _U('key_description',_plate)})
 end)
 
-RegisterNetEvent('Boost-Locksystem:CreateKeyCopy', function(_plate)
+RegisterNetEvent('Boost-Locksystem:CreateKeyCopy')
+AddEventHandler('Boost-Locksystem:CreateKeyCopy', function(_plate)
     local xPlayer = ESX.GetPlayerFromId(source)
     if xPlayer.getJob().name ~= 'mechanic' then
         DropPlayer(xPlayer.source, ':)')
         return
     end
     xPlayer.addInventoryItem('car_keys', 1, {plate = _plate, description = _U('key_description',_plate)})
+end)
+
+RegisterNetEvent('Boost-Locksystem:RemoveKey')
+AddEventHandler('Boost-Locksystem:RemoveKey', function(_plate)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    if xPlayer.getInventoryItem('car_keys', {plate = _plate, description = _U('key_description', _plate)}).count > 0 then
+        xPlayer.removeInventoryItem('car_keys', 1, {plate = _plate, description = _U('key_description', _plate)})
+    end
 end)
 
 RegisterNetEvent('Boost-Locksystem:Refresh', function()
