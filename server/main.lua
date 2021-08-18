@@ -50,10 +50,10 @@ RegisterNetEvent('Boost-Locksystem:CreateKeyCopy', function(_plate)
 end)
 
 RegisterNetEvent('Boost-Locksystem:Refresh', function()
-    local xPlayers = ESX.GetPlayers()
+    local xPlayers = ESX.GetExtendedPlayers()
     local found = 0
     for i=1, #xPlayers, 1 do
-        local xPlayer = ESX.GetPlayerFromId(xPlayers[i])
+        local xPlayer = xPlayers[i]
         local inventory = xPlayer.getInventory()
         for i=1, tablelength(inventory) do
             if inventory[i].name == 'car_keys' then
