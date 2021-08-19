@@ -1,5 +1,6 @@
 local searchedVeh = {}
 local startedEngine = {}
+local searchedFile
 
 ESX.RegisterServerCallback('Boost-Locksystem:HasKeys', function(source, cb, _plate)
     local xPlayer = ESX.GetPlayerFromId(source)
@@ -29,7 +30,7 @@ AddEventHandler('Boost-Locksystem:AddKeys', function(_plate)
         return
     end
     searchedVeh[_plate] = true
-    TriggerClientEvent('Boost-Locksystem:SetUpSearched', -1, searchedVeh)
+    TriggerEvent('Boost-Locksystem:Refresh')
     xPlayer.addInventoryItem('car_keys', 1, {plate = _plate, description = _U('key_description',_plate)})
 end)
 
@@ -52,20 +53,17 @@ AddEventHandler('Boost-Locksystem:RemoveKey', function(_plate)
 end)
 
 RegisterNetEvent('Boost-Locksystem:Refresh', function()
-    local xPlayers = ESX.GetExtendedPlayers()
-    local found = 0
-    for i=1, #xPlayers, 1 do
-        local xPlayer = xPlayers[i]
-        local inventory = xPlayer.getInventory()
-        for i=1, tablelength(inventory) do
-            if inventory[i].name == 'car_keys' then
-                searchedVeh[inventory[i].metadata.plate] = true
-                found = found + 1
-            end
-        end
+    if tablelength(searchedVeh) < 1 then
+        searchedFile = LoadResourceFile(GetCurrentResourceName(), './searchedVeh.json')
+        searchedVeh = json.decode(searchedFile)
+        print('[^6Boost-Locksystem^0] Refreshed ' .. tablelength(json.decode(searchedFile)) .. ' searched vehicles !')
+        TriggerClientEvent('Boost-Locksystem:SetUpSearched', -1, searchedVeh)
+    else
+        searchedFile = LoadResourceFile(GetCurrentResourceName(), './searchedVeh.json')
+        SaveResourceFile(GetCurrentResourceName(), 'searchedVeh.json', json.encode(searchedVeh), -1)
+        print('[^6Boost-Locksystem^0] Refreshed ' .. tablelength(json.decode(searchedFile)) .. ' searched vehicles !')
+        TriggerClientEvent('Boost-Locksystem:SetUpSearched', -1, searchedVeh)
     end
-    print('[^6Boost-Locksystem^0] Refreshed ' .. found .. ' searched vehicles !')
-    TriggerClientEvent('Boost-Locksystem:SetUpSearched', -1, searchedVeh)
 end)
 
 RegisterNetEvent('Boost-Locksystem:SyncEngine', function(_plate, state)
