@@ -41,7 +41,7 @@ SetInterval('lock',10, function()
     if DoesEntityExist(GetVehiclePedIsTryingToEnter(PlayerPedId(ped))) then
         local veh = GetVehiclePedIsTryingToEnter(PlayerPedId(ped))
 	    local lock = GetVehicleDoorLockStatus(veh)
-	    if lock == 4 then
+	    if lock == Config.LockStateLocked then
 	        ClearPedTasks(ped)
 	    end
     else SetInterval('lock', 100) end
@@ -109,7 +109,7 @@ RegisterNUICallback('Lock', function(data)
     if isInVehicle then
         if vehLockStatus == 1 then
             Progress(_('pr_lock'), 1500)
-            SetVehicleDoorsLocked(veh, 4)
+            SetVehicleDoorsLocked(veh, Config.LockStateLocked)
             Notification('success', _('lock_veh'))
         else
             Notification('error', _('locked'))
@@ -125,7 +125,7 @@ RegisterNUICallback('Lock', function(data)
                 DeleteEntity(SpatelObject)
                 ClearPedTasksImmediately(playerPed)
                 DeleteEntity(SpatelObject)
-                SetVehicleDoorsLocked(veh, 4)
+                SetVehicleDoorsLocked(veh, Config.LockStateLocked)
                 Notification('success', _('lock_veh'))
             else
                 Notification('error',_('too_far_veh'))
@@ -152,7 +152,7 @@ RegisterNUICallback('Unlock', function(data)
         return
     end
     if isInVehicle then
-        if vehLockStatus == 4 then
+        if vehLockStatus == Config.LockStateLocked then
             Progress(_('pr_unlock'), 1500)
             SetVehicleDoorsLocked(veh, 1)
             Notification('success', _('unlock_veh'))
@@ -160,7 +160,7 @@ RegisterNUICallback('Unlock', function(data)
             Notification('error', _('unlocked'))
         end
     else
-        if vehLockStatus == 4 then
+        if vehLockStatus == Config.LockStateLocked then
             if #(playerCoords - GetEntityCoords(veh)) <= 4.0 then
                 local SpatelObject = CreateObject(GetHashKey("p_car_keys_01"), 0, 0, 0, true, true, true)
                 AttachEntityToEntity(SpatelObject, playerPed, GetPedBoneIndex(playerPed, 57005), 0.08, 0.0, -0.02, 0.0, -25.0, 130.0, true, true, false, true, 1, true)

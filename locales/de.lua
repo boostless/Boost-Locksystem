@@ -1,0 +1,19 @@
+Locales['de'] = {
+   ['no_key_veh'] = 'Keine Schlüssel im Fahrzeug vorhanden!',
+   ['found_key'] = 'Du hast Schlüssel gefunden!',
+   ['has_key'] = 'Du hast bereits einen Schlüssel für das Fahrzeug',
+   ['pr_engine_on'] = 'Mache Motor an',
+   ['pr_engine_off'] = 'Mache Motor aus',
+   ['pr_lock'] = 'Verschliesse Fahrzeug',
+   ['pr_unlock'] = 'Öffne Fahrzeug',
+   ['has_no_key'] = "Du hast keine Schlüssel für dieses Fahrzeug!",
+   ['lock_veh'] = 'Fahrzeug abgesperrt!',
+   ['unlock_veh'] = 'Fahrzeug aufgesperrt!',
+   ['too_far_veh'] = 'Fahrzeug ist zu weit weg',
+   ['not_registered'] = 'Fahrzeug ist nicht registriert',
+   ['key_description'] = 'Dieser Schlüssel ist für das Fahrzeug mit dem Nummernschild %s ',
+   ['key_not_owned_car'] = "Dieser Schlüssel gehört nicht zu diesem Fahrzeug",
+   ['locked'] = 'Fahrzeug bereits verschlossen',
+   ['unlocked'] = 'Fahrzeug bereits geöffnet',
+   ['no_veh_nearby'] = 'Keine Fahrzeuge in der Nähe'
+}
