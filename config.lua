@@ -1,6 +1,7 @@
 Config = {}
-Config.OnlyRegisteredCars = false -- If true only cars in owned_vehicles table could be searched for key
+Config.OnlyRegisteredCars = true -- If true only cars in owned_vehicles table could be searched for key
 Config.UseProgressBar = true
+Config.LockStateLocked = 4 		-- Add the lockstate you use for example 4 or 2
 Config.Locale = 'en'
 
 
