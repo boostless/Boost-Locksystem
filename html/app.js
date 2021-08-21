@@ -1,6 +1,6 @@
 function main(){
     return {
-        show: false,
+        show: true,
         plate: 'Plate',
         lock(){
             postData('https://Boost-Locksystem/Lock', {plate: this.plate})
