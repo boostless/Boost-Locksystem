@@ -1,0 +1,19 @@
+Locales['fr'] = {
+   ['no_key_veh'] = "Il n'y a pas de clés dans ce véhicule.",
+   ['found_key'] = "Vous venez de trouver les clés.",
+   ['has_key'] = "Vous avez déjà les clés de ce véhicule",
+   ['pr_engine_on'] = "Démarrage du moteur",
+   ['pr_engine_off'] = "Éteignage du moteur",
+   ['pr_lock'] = "Verrouillage du véhicule",
+   ['pr_unlock'] = "Déverrouillage du véhicule",
+   ['has_no_key'] = "Vous n'avez pas les clés de ce véhicule",
+   ['lock_veh'] = "Véhicule verrouillé",
+   ['unlock_veh'] = "Véhicule déverrouillé",
+   ['too_far_veh'] = "Le véhicule est trop loin",
+   ['not_registered'] = "Le véhicule n'est pas enregsitré",
+   ['key_description'] = "Cette clé correspond au véhicule: %s",
+   ['key_not_owned_car'] = "Vous n'utilisez pas la bonne clé",
+   ['locked'] = "Le véhicule est déjà verrouillé",
+   ['unlocked'] = "Le véhicule est déjà déverrouillé",
+   ['no_veh_nearby'] = "Aucun véhicule à proximité"
+}
