@@ -1,26 +1,27 @@
 local searchedVeh = {}
 local startedEngine = {}
 local uiOpen = false
+local PlayerPed = nil
+local mainThread = nil
+local lockThread = nil
 
 RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function()
+    PlayerPed = PlayerPedId()
 	TriggerServerEvent('Boost-Locksystem:Refresh')
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     RegisterCommand('search', Search)
 end)
 
-
-SetInterval('main', 10, function()
-    local playerPed = PlayerPedId()
-    local veh = GetVehiclePedIsIn(playerPed, true)
+mainThread = SetInterval(function()
+    local veh = GetVehiclePedIsIn(PlayerPed, true)
     local plate = GetVehicleNumberPlateText(veh)
-    local isInVehicle = IsPedInAnyVehicle(playerPed, false)
+    local isInVehicle = IsPedInAnyVehicle(PlayerPed, false)
+    if not isInVehicle then SetInterval(mainThread, 500) end
 
-    if not isInVehicle then SetInterval('main', 500) end
-
-    if isInVehicle and GetPedInVehicleSeat(veh, -1) == playerPed then
+    if isInVehicle and GetPedInVehicleSeat(veh, -1) == PlayerPed then
         if startedEngine[plate] == true then
             SetVehicleEngineOn(veh, true, true, false)
         else
@@ -28,15 +29,14 @@ SetInterval('main', 10, function()
         end
     end
 
-    if isInVehicle and GetPedInVehicleSeat(veh, -1) == playerPed then
+    if isInVehicle and GetPedInVehicleSeat(veh, -1) == PlayerPed then
         if not startedEngine[plate] then
             SetVehicleEngineOn(veh, false, false, true)
         end
     end
+end, 100)
 
-end)
-
-SetInterval('lock',10, function()
+lockThread = SetInterval(function()
     local ped = GetPlayerPed(-1)
     if DoesEntityExist(GetVehiclePedIsTryingToEnter(PlayerPedId(ped))) then
         local veh = GetVehiclePedIsTryingToEnter(PlayerPedId(ped))
@@ -44,14 +44,13 @@ SetInterval('lock',10, function()
 	    if lock == Config.LockStateLocked then
 	        ClearPedTasks(ped)
 	    end
-    else SetInterval('lock', 100) end
-end)
+    else SetInterval(lockThread, 500)  end
+end, 10)
 
 function Search()
-    local playerPed = PlayerPedId()
-    local vehicle = GetVehiclePedIsIn(playerPed, true)
+    local vehicle = GetVehiclePedIsIn(PlayerPed, true)
     local plate = GetVehicleNumberPlateText(vehicle)
-    local isInVehicle = IsPedInAnyVehicle(playerPed, false)
+    local isInVehicle = IsPedInAnyVehicle(PlayerPed, false)
     ESX.TriggerServerCallback('Boost-Locksystem:HasKeys', function(hasKeys) 
         if hasKeys then
             Notification('info', _('has_key'))
@@ -81,10 +80,9 @@ function Search()
     end, plate)
 end
 
-RegisterNetEvent('Boost-Locksystem:LockUnlock')
-AddEventHandler('Boost-Locksystem:LockUnlock', function(item, wait, cb)
-    local metadata = ESX.GetPlayerData().inventory[item.slot].metadata
-    OpenUi(metadata.plate)
+RegisterNetEvent('Boost-Locksystem:LockUnlock', function(item, data)
+    if not data.metadata.plate then Notification('error', 'The key has no metadata !') return end
+    OpenUi(data.metadata.plate)
 end)
 
 RegisterNUICallback('Close', function(data)
@@ -97,10 +95,9 @@ RegisterNUICallback('Lock', function(data)
         Notification('error', _('no_veh_nearby'))
         return
     end
-    local playerPed = PlayerPedId()
-    local playerCoords = GetEntityCoords(playerPed)
+    local playerCoords = GetEntityCoords(PlayerPed)
     local vehLockStatus = GetVehicleDoorLockStatus(veh)
-    local isInVehicle = IsPedInAnyVehicle(playerPed, false)
+    local isInVehicle = IsPedInAnyVehicle(PlayerPed, false)
     local plate = GetVehicleNumberPlateText(veh)
     if data.plate ~= plate then
         Notification('error', _('key_not_owned_car'))
@@ -118,12 +115,12 @@ RegisterNUICallback('Lock', function(data)
         if vehLockStatus == 1 then
             if #(playerCoords - GetEntityCoords(veh)) <= 4.0 then
                 local SpatelObject = CreateObject(GetHashKey("p_car_keys_01"), 0, 0, 0, true, true, true)
-                AttachEntityToEntity(SpatelObject, playerPed, GetPedBoneIndex(playerPed, 57005), 0.08, 0.0, -0.02, 0.0, -25.0, 130.0, true, true, false, true, 1, true)
+                AttachEntityToEntity(SpatelObject, PlayerPed, GetPedBoneIndex(PlayerPed, 57005), 0.08, 0.0, -0.02, 0.0, -25.0, 130.0, true, true, false, true, 1, true)
                 loadAnimDict("veh@break_in@0h@p_m_one@")
-                TaskPlayAnim(playerPed, 'veh@break_in@0h@p_m_one@', 'low_force_entry_ds' ,1.0, 4.0, -1, 49, 0, false, false, false)
+                TaskPlayAnim(PlayerPed, 'veh@break_in@0h@p_m_one@', 'low_force_entry_ds' ,1.0, 4.0, -1, 49, 0, false, false, false)
                 Progress(_('pr_lock'), 1500)
                 DeleteEntity(SpatelObject)
-                ClearPedTasksImmediately(playerPed)
+                ClearPedTasksImmediately(PlayerPed)
                 DeleteEntity(SpatelObject)
                 SetVehicleDoorsLocked(veh, Config.LockStateLocked)
                 Notification('success', _('lock_veh'))
@@ -142,10 +139,9 @@ RegisterNUICallback('Unlock', function(data)
         Notification('error', _('no_veh_nearby'))
         return
     end
-    local playerPed = PlayerPedId()
-    local playerCoords = GetEntityCoords(playerPed)
+    local playerCoords = GetEntityCoords(PlayerPed)
     local vehLockStatus = GetVehicleDoorLockStatus(veh)
-    local isInVehicle = IsPedInAnyVehicle(playerPed, false)
+    local isInVehicle = IsPedInAnyVehicle(PlayerPed, false)
     local plate = GetVehicleNumberPlateText(veh)
     if data.plate ~= plate then
         Notification('error', _('key_not_owned_car'))
@@ -163,12 +159,12 @@ RegisterNUICallback('Unlock', function(data)
         if vehLockStatus == Config.LockStateLocked then
             if #(playerCoords - GetEntityCoords(veh)) <= 4.0 then
                 local SpatelObject = CreateObject(GetHashKey("p_car_keys_01"), 0, 0, 0, true, true, true)
-                AttachEntityToEntity(SpatelObject, playerPed, GetPedBoneIndex(playerPed, 57005), 0.08, 0.0, -0.02, 0.0, -25.0, 130.0, true, true, false, true, 1, true)
+                AttachEntityToEntity(SpatelObject, PlayerPed, GetPedBoneIndex(PlayerPed, 57005), 0.08, 0.0, -0.02, 0.0, -25.0, 130.0, true, true, false, true, 1, true)
                 loadAnimDict("veh@break_in@0h@p_m_one@")
-                TaskPlayAnim(playerPed, 'veh@break_in@0h@p_m_one@', 'low_force_entry_ds' ,1.0, 4.0, -1, 49, 0, false, false, false)
+                TaskPlayAnim(PlayerPed, 'veh@break_in@0h@p_m_one@', 'low_force_entry_ds' ,1.0, 4.0, -1, 49, 0, false, false, false)
                 Progress(_('pr_unlock'), 1500)
                 DeleteEntity(SpatelObject)
-                ClearPedTasksImmediately(playerPed)
+                ClearPedTasksImmediately(PlayerPed)
                 DeleteEntity(SpatelObject)
                 SetVehicleDoorsLocked(veh, 1)
                 Notification('success', _('unlock_veh'))
@@ -182,10 +178,9 @@ RegisterNUICallback('Unlock', function(data)
 end)
 
 RegisterNUICallback('Engine', function(data)
-    local playerPed = PlayerPedId()
-    local veh = GetVehiclePedIsIn(playerPed, true)
+    local veh = GetVehiclePedIsIn(PlayerPed, true)
     local plate = GetVehicleNumberPlateText(vehicle)
-    local isInVehicle = IsPedInAnyVehicle(playerPed, false)
+    local isInVehicle = IsPedInAnyVehicle(PlayerPed, false)
     local plate = GetVehicleNumberPlateText(veh)
     if isInVehicle then
         if data.plate ~= plate then
@@ -207,7 +202,7 @@ end)
 loadAnimDict = function(anim)
     RequestAnimDict(anim)
     while not HasAnimDictLoaded(anim) do
-        Citizen.Wait(0)
+        Wait(0)
     end
 end
 

@@ -3,10 +3,11 @@ game 'gta5'
 
 author 'Boost#4383'
 description 'Boost`s locksystem with metadata'
-version '1.0.0'
+version '2.0.0'
 
 shared_scripts{
     '@es_extended/imports.lua',
+    '@pe-lualib/init.lua',
     'config.lua'
 } 
 
@@ -24,10 +25,15 @@ server_scripts{
     'server/main.lua'
 } 
 
+dependencies {
+    'ox_inventory',
+    'es_extended'
+}
+
 ui_page "html/index.html"
 
 files {
-    "html/index.html",
-    "html/app.js",
-    "html/css/tailwind.css",
+    'html/**'
 }
+
+lua54 'yes'
